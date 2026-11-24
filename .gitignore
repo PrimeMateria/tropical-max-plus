@@ -1,0 +1,14 @@
+# Generated Lean / PrismPM build artifacts
+.lake/
+.lexlean/build/
+.lexlean/.lock
+.prism/build/
+.prism/.prismpm.lock
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Immutable timestamped report archive (LATEST reports remain tracked)
+reports/*_20*.md
+reports/*_20*.json

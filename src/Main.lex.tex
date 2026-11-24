@@ -1,0 +1,33 @@
+\begin{lexlean}{Main}
+\useglossary{lexlean.std.nat@1.2.0}
+\useglossary{prism.arch@1.0.0}
+\useglossary{prism.qual@1.0.0}
+\useglossary{prism.sec@1.0.0}
+\title{Natural number addition}
+\begin{semanticmodule}
+definition{
+  name: tropicalMul,
+  parameters: [w : Nat, x : Nat],
+  result: Nat,
+  body: (w + x),
+  executable: true,
+  production: {effects: [overflow], targets: [rust-core, rust-std]}
+}
+
+definition{
+  name: tropicalScore,
+  parameters: [w : Nat, x : Nat, b : Nat],
+  result: Nat,
+  body: ((w + x) + b),
+  executable: true,
+  production: {effects: [overflow], targets: [rust-core, rust-std]}
+}
+
+theorem{
+  name: router_smoke_eval,
+  parameters: [],
+  statement: ((tropicalScore 3 5 2) = 10),
+  proof: decide{}
+}
+\end{semanticmodule}
+\end{lexlean}

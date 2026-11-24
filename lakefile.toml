@@ -1,0 +1,6 @@
+name = "tropical_router_host"
+version = "0.1.0"
+
+[[executable]]
+name = "tropical_router"
+root = "TropicalRouter.Main"

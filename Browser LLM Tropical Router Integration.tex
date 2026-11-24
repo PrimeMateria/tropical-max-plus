@@ -1,0 +1,311 @@
+﻿Formal Mapping of Tropical Max-Plus Routers to In-Browser LLM Runtimes: Convergence, Polyhedral Boundary Mechanics, and WebGPU Execution Seams
+Theoretical Foundations of Tropical Gating and Max-Plus Algebra
+Classical artificial intelligence serving architectures and client-side Mixture-of-Experts (MoE) routing mechanisms rely on linear projections evaluated in IEEE-754 floating-point arithmetic (FP32, FP16, or BF16) followed by soft, continuous probabilistic gating functions such as Softmax [1, 2, 3]. Although continuous differentiable gating facilitates offline parameter optimization via backpropagation, it introduces critical operational bottlenecks in browser-resident runtimes: microarchitectural dynamic energy overhead from floating-point Multiply-Accumulate (MAC) operations, expert collapse, non-deterministic boundary drift across heterogeneous execution backends, and non-reproducible routing states during client-side generation [1, 2, 4, 5].
+
+
+To bypass floating-point control plane overhead, the routing infrastructure is mapped to the max-plus semiring, defined algebraically as [1, 3, 6]:
+
+
+R_max = (R U {-infinity}, (+)t, (*)t)
+
+
+where R represents the real numbers extended with negative infinity [1, 3, 6]. Under max-plus algebra, classical addition is replaced by tropical addition, defined as the binary maximum operator [1, 3]:
+
+
+a (+)t b = Math.max(a, b)
+
+
+and classical multiplication is replaced by tropical multiplication, defined as standard scalar addition [1, 3]:
+
+
+a (*)t b = a + b
+
+
+The additive identity element is -infinity, satisfying Math.max(a, -infinity) = a for all elements in R_max [1, 3]. The multiplicative identity element is 0, satisfying a + 0 = a [1, 3]. Tropical addition is idempotent, meaning Math.max(a, a) = a [1, 7]. This idempotency prevents the existence of additive inverses, structuring R_max as an idempotent semiring [1, 2].
+
+
+When evaluating matrix-vector projections over token embeddings or attention logits x in R^d with a routing matrix W in R^(N x d) and bias vector b in R^N, matrix multiplication converts floating-point Multiply-Accumulate (MAC) inner products into fixed-point Add-Compare-Select (ACS) integer logic [1, 3]. The tropical routing score P_i(x) for expert or shard index i in {1, 2, ..., N} is evaluated as [1, 3]:
+
+
+P_i(x) = max_{j=1..d} (W_{i,j} + x_j) + b_i
+
+
+In tropical tensor notation, this corresponds to P(x) = W (*)t x (+)t b [1, 3]. The discrete winning expert assignment E(x) is selected via an argmax reduction [1, 3]:
+
+
+E(x) = argmax_{i=1..N} ( max_{j=1..d} (W_{i,j} + x_j) + b_i )
+
+
+This formulation removes all floating-point matrix multiplications, exponentiations, and continuous divisions from the runtime routing path [1, 3, 6].
+
+
+The family of max-plus linear operators Lambda_m acts directly on token embedding vectors or attention logit matrices within the model's inference pipeline [6, 8]. The metric contraction of Lambda_m in the Hilbert projective metric supplies a certified convergence criterion for shard-local aggregations performed inside a single browser tab or across distributed Web Workers [6, 9]. The Hilbert projective metric measures distance as cross-ratios of valuations, rendering contraction bounds invariant to dynamic scaling perturbations and hardware-specific floating-point gain variations across diverse WebGPU backends (such as Apple Metal, Vulkan, or DirectX via ANGLE) [2, 6, 7]. By projecting continuous logit spaces into max-plus metric spaces, the router abstracts away hardware-level precision irregularities, proving contractivity without server-side validation rounds [2, 6].
+Polyhedral Geometry of Residual Streams and KV-Cache States
+Continuous piecewise-linear (CPWL) neural network architectures—such as deep transformers utilizing Rectified Linear Unit (ReLU), Maxout, or high-confidence asymptotic limits of Softmax functions—compute tropical rational functions [3, 5, 7, 9]. A tropical polynomial F(x) is defined as a finite tropical sum of tropical monomials [1, 3, 7]:
+
+
+F(x) = max_i (a_i + <s_i, x>)
+
+
+where a_i represents scalar bias coefficients, x in R^d is the input vector representation, s_i in R^d represents weight vectors, and <s_i, x> denotes the standard inner product [1, 3, 7]. Feedforward transformer layers operating under CPWL regimes evaluate tropical rational functions, expressed as the tropical quotient (classical subtraction) of two convex tropical polynomials [3, 5, 7].
+
+
+The decision boundaries partitioning active compute regions correspond to subsets of a tropical hypersurface V(P), defined as the locus of points where the maximum score in P(x) is attained by at least two distinct tropical linear forms [1, 2, 3, 9]:
+
+
+V(P) = { x in R^d : exists i != j such that P_i(x) = P_j(x) = max_k P_k(x) }
+
+
+Geometrically, V(P) forms a polyhedral complex of codimension one that partitions the input vector space R^d into a finite collection of convex polyhedral decision chambers C_i [1, 2, 3, 6]:
+
+
+C_i = { x in R^d : P_i(x) > P_k(x) for all k != i }
+
+
+Within the interior of any polyhedral chamber C_i, a single linear monomial strictly dominates the tropical polynomial [1, 2, 3, 7]. As a result, token processing within a chamber is locally affine-linear, enabling exact, deterministic routing assignments of hidden-state vectors to expert execution paths without evaluating continuous probability distributions [2, 3, 6].
+
+
+Prime-indexed degeneracy tracks are realized as the faces of the tropical polyhedral complex induced by the model's piecewise-linear regions [6, 9]. These polyhedral faces serve as exact combinatorial labels for the discrete states of the transformer residual stream or Key-Value (KV) cache [6]. Rather than tracking continuous floating-point trajectory shifts in high-dimensional embedding spaces, the residual stream state is indexed by the specific face of the tropical variety through which the vector passes [6, 9]. Valuation-theoretic tropicalization transforms continuous polyhedral hypersurfaces into exact combinatorial graphs, providing a structural layout invariant for client-side state management [6, 9].
+Arithmetic-Exact Transition Predicates and Boundary Crossings
+In standard serving frameworks, routing hand-offs, precision switches, or expert dispatch decisions are executed by thresholding continuous Softmax probabilities [1, 3, 4]. Because IEEE-754 floating-point arithmetic incurs non-associative rounding shifts across heterogeneous GPU architectures, continuous gating mechanisms suffer from soft numerical boundary drift [2, 4, 6]. Minor numerical noise can cause identical inputs to yield diverging expert selections when executed across different browser clients or accelerator backends [2, 4].
+
+
+The tropical transition predicate eliminates floating-point representation drift by evaluating discrete structural conditions [6]. The predicate fires exactly when two or more tropical linear forms attain the same maximum value [6]:
+
+
+Predicate(x) = True if exists i != j such that P_i(x) = P_j(x) = max_k P_k(x), else False
+
+
+This condition establishes an arithmetic-exact test for shard-boundary crossings [6]. Because tropical addition (Math.max) and tropical multiplication (scalar addition) operate over integer or exact log-domain scores, the predicate is evaluated without residual floating-point drift [6]. When the predicate evaluates to True, the token vector lies precisely on the codimension-one tropical hypersurface V(P), indicating an exact combinatorial boundary crossing [2, 3, 6].
+
+
+Firing of the transition predicate emits discrete control signals into the browser runtime pipeline [6]:
+
+
+* Dynamic Precision Switching: Triggering a precision adjustment (such as shifting KV-cache allocation between 4-bit, 8-bit, or FP16 representations) at the exact moment token representations cross structural polyhedral boundaries [5, 6].
+* Worker Computation Hand-offs: Handing off execution tasks from the local WebGPU execution context to a secondary background Web Worker or Service Worker without state synchronization jitter [6, 10].
+* Quantized Expert Selection: Dispatching hidden-state vectors to specialized quantized feed-forward network (FFN) expert blocks in client-side MoE models [3, 5, 6].
+
+
+Because tropical max-plus operators are associative and idempotent—satisfying Math.max(a, Math.max(b, c)) = Math.max(Math.max(a, b), c)—the transition predicate evaluates to identical combinatorial signals regardless of whether it is computed on the main application thread or inside a background Web Worker thread [6, 11]. This algebraic property eliminates the requirement for distributed thread locking or floating-point reconciliation across Web Worker boundaries [6, 10].
+Practical Browser Architecture Blueprint (November 2026 Stack)
+Deploying the tropical router within client-side browser environments requires interfacing the zero-FPU control plane with WebGPU inference engines [5, 6]. The fastest practical implementation path relies on @mlc-ai/web-llm (version 0.2.88) as the primary browser runtime engine [6, 11].
+Architectural Execution Sequence
+The complete operational data flow proceeds sequentially through six functional stages across the browser environment:
+
+
+1. Browser Ingestion and Main Thread Surface: The application initializes within a standard Vite ESM or vanilla web application, managing user interaction and pipeline configuration [6].
+2. Web Worker Isolation Seam: Workloads are passed to a background thread using WebWorkerMLCEngineHandler or ServiceWorkerMLCEngineHandler, decoupling computation from UI rendering [6, 10, 11].
+3. WebGPU Execution Context: @mlc-ai/web-llm executes compiled WASM and WGSL compute kernels, falling back to Transformers.js and ONNX Runtime Web over WASM if WebGPU is absent [6, 11, 12].
+4. Score Extraction and Semiring Lifting: Logit output vectors or intermediate attention scores are extracted and lifted into the max-plus semiring R_max [1, 6].
+5. Tropical Operator and Predicate Evaluation: The family of operators Lambda_m calculates tropical scores and tests the tie-for-maximum condition using Math.max or optional @justinelliottcobb/amari-wasm bindings [6, 13].
+6. Signal Emission and Control Dispatch: Emitted combinatorial boundary signals trigger precision switches, worker task hand-offs, or expert routing without floating-point drift [6].
+LLM Runtime Tier
+The application uses @mlc-ai/web-llm (version 0.2.88) to instantiate a native WebGPU execution engine featuring an OpenAI-compatible chat.completions API surface, pre-compiled WebAssembly (WASM) computer modules, and WebGPU WGSL compute kernels [6, 11, 14, 15]. The runtime supports models ranging from SmolLM2-scale (~135M to 1.7B parameters) up to 8B parameter models in 4-bit quantization [6, 11].
+
+
+Engine instantiation is managed via CreateMLCEngine for main-thread tasks or CreateWorkerMLCEngine paired with WebWorkerMLCEngineHandler to offload inference workloads from the main UI thread [6, 10, 11]. Model weight artifacts and compiled WASM libraries are persisted on initial load via the browser Cache API and the Origin Private File System (OPFS), eliminating redundant network fetching on subsequent application launches [6, 10].
+
+
+When WebGPU hardware acceleration is unavailable (e.g., on legacy mobile browsers or constrained WebAssembly environments), the runtime falls back to Transformers.js combined with ONNX Runtime Web executing over WASM [6, 12]. Both runtime stacks expose streaming generation primitives and intermediate score evaluation callbacks required for logit extraction [6, 12, 15].
+Tropical Router Engine
+The max-plus arithmetic primitives are implemented in client-side code through two execution options [6]:
+
+
+1. Pure JavaScript Implementation: Implemented in pure JavaScript, tropical addition is bound to Math.max and tropical multiplication to scalar addition + [1, 6]. A minimal implementation evaluates Lambda_m operators and tie-detection predicates over log-domain scores in under 50 lines of JavaScript, delivering optimal integration velocity and zero execution overhead on integer or log-probability score arrays [6].
+2. High-Assurance WASM Reference: For high-assurance execution environments requiring formal validation, the router invokes the Amari WASM bindings (@justinelliottcobb/amari-wasm) [6, 13]. The WASM binary exports WasmTropicalNumber data structures and optimized vector batch folds, executing parallel max-plus reductions over large logit arrays [6, 13].
+Integration Seam Mechanics
+The router integrates directly into the autoregressive token generation loop or attention-score extraction callback [6]. On each generation step:
+
+
+1. Score Lifting: Intermediate attention logits or token output probabilities extracted from the WebGPU tensor context are lifted into the max-plus semiring R_max [1, 6].
+2. Operator Application: The family of max-plus linear operators Lambda_m is applied to the score vector, evaluating raw tropical routing profiles P_i(x) = max_j (W_{i,j} + x_j) + b_i [1, 3, 6].
+3. Predicate Evaluation: The tie-detection predicate evaluates whether the maximum score is shared across multiple linear terms within an exact integer tolerance [6].
+4. Signal Emission: The resulting discrete combinatorial signal—representing a degeneracy-track index or boundary-crossing flag—is emitted back into the sampling control loop, worker dispatcher, or KV-cache management engine [6].
+
+
+Because max-plus operations are associative and idempotent, evaluating the predicate inside a background Web Worker yields bit-exact parity with evaluations on the main thread, shielding the user interface from computation stalls while preventing cross-thread state divergence [6, 10, 11].
+Microarchitectural Acceleration and Hardware Efficiency Metrics
+Transitioning routing logic from continuous floating-point Multiply-Accumulate (MAC) calculations to max-plus Add-Compare-Select (ACS) integer primitives fundamentally alters silicon area footprint, dynamic power consumption, and arithmetic latency [1, 2].
+
+
+Hardware Performance Metric
+	Standard FP32 MAC Baseline
+	Standard FP16 MAC
+	Fixed-Point ACS Integer Core
+	CRMF-Encapsulated ACS Core
+	ASIC Silicon Die Area
+	1.00x (Baseline) [1, 2]
+	~0.25x - 0.35x [1, 2]
+	~0.05x - 0.08x [1, 2]
+	~0.07x - 0.10x [1, 2]
+	Dynamic Energy per Op (28nm)
+	~3.10 pJ [1, 2]
+	~0.80 pJ [1, 2]
+	~0.10 pJ [1, 2]
+	~0.12 pJ [1, 2]
+	Routing Pass Latency
+	3–5 Clock Cycles [1, 2]
+	2–4 Clock Cycles [1, 2]
+	1 Clock Cycle [1, 2]
+	1–2 Clock Cycles (Fused L0) [1, 2]
+	Dispatch End-to-End Latency
+	45–120 microseconds [1, 3]
+	30–85 microseconds
+	8–18 microseconds [1, 3]
+	12–25 microseconds [1, 3]
+	FPU Hardware Requirement
+	Full FP32 FPU Pipeline [1, 2]
+	FP16 Vector Unit [1, 2]
+	Zero-FPU (Integer Core) [1, 2]
+	Zero-FPU (Integer Core) [1, 2]
+	Comparator Tree Depth
+	N/A (Softmax Division) [1, 3]
+	N/A (Softmax Division) [1, 3]
+	log2(N) Stages [1, 2]
+	log2(N) Stages [1, 2]
+	
+
+In customized browser acceleration modules or WebAssembly SIMD integer extensions, converting floating-point MAC units into dual-adder ACS topologies doubles arithmetic throughput per logic unit [1, 2]. Bypassing floating-point exponentiation and continuous division yields a 90% reduction in dynamic energy consumption during routing passes while eliminating continuous probability buffers [1, 2, 3].
+Minimal Reproducible Skeleton and Drift-Isolation Protocol
+A minimal client-side reproducible testbed isolates arithmetic drift from model representation drift using pure browser ESM components [6].
+Client-Side Skeleton Implementation
+import { CreateMLCEngine } from "@mlc-ai/web-llm";
+
+
+function evaluateTropicalRoute(logitVector, weightMatrix, biasVector) {
+    const N = weightMatrix.length;
+    const d = logitVector.length;
+    let maxScore = -Infinity;
+    let winnerIndex = -1;
+    let isTie = false;
+    const scores = new Float64Array(N);
+
+
+    for (let i = 0; i < N; i++) {
+        let maxVal = -Infinity;
+        const row = weightMatrix[i];
+        for (let j = 0; j < d; j++) {
+            const val = row[j] + logitVector[j];
+            if (val > maxVal) maxVal = val;
+        }
+        scores[i] = maxVal + biasVector[i];
+
+
+        if (scores[i] > maxScore) {
+            maxScore = scores[i];
+            winnerIndex = i;
+            isTie = false;
+        } else if (Math.abs(scores[i] - maxScore) < 1e-9) {
+            isTie = true;
+        }
+    }
+
+
+    return { winnerIndex, maxScore, isTie, scores };
+}
+
+
+async function initTropicalBrowserRunner() {
+    const selectedModel = "SmolLM2-360M-Instruct-q4f16_1-MLC";
+    const engine = await CreateMLCEngine(selectedModel, {
+        initProgressCallback: (report) => console.log(report.text)
+    });
+
+
+    const W = Array.from({ length: 4 }, () => Array.from({ length: 16 }, () => Math.random() * 2 - 1));
+    const b = [0, 0, 0, 0];
+
+
+    const completion = await engine.chat.completions.create({
+        messages: [{ role: "user", content: "Evaluate tropical boundary predicate." }],
+        max_tokens: 20,
+        stream: true,
+        logprobs: true,
+        top_logprobs: 16
+    });
+
+
+    for await (const chunk of completion) {
+        const logprobs = chunk.choices[0]?.logprobs?.content[0]?.top_logprobs;
+        if (logprobs) {
+            const logitVector = logprobs.map(lp => lp.logprob);
+            const routeResult = evaluateTropicalRoute(logitVector, W, b);
+
+
+            if (routeResult.isTie) {
+                console.warn(`[TROPICAL SIGNAL] Shard-boundary crossing detected! Score: ${routeResult.maxScore}`);
+            } else {
+                console.log(`[TROPICAL ROUTE] Assigned to Polyhedral Chamber C_${routeResult.winnerIndex}`);
+            }
+        }
+    }
+}
+
+
+initTropicalBrowserRunner();
+Drift-Isolation Experimental Protocol
+To validate the theoretical guarantees of tropical routing, the experimental framework evaluates exact tropical decision paths against equivalent aggregations computed in standard IEEE-754 floating-point arithmetic under repeated composition [6]:
+
+
+1. Protocol Setup: An input logit vector x(0) in R^d is passed through K=10,000 sequential routing operations using two isolated computational pipelines:
+   * Path A (Continuous IEEE-754): Evaluates standard matrix-vector products followed by continuous Softmax gating g(x) = Softmax(W * x) in FP32 precision.
+   * Path B (Exact Tropical Max-Plus): Evaluates max-plus Add-Compare-Select projections P(x) = W (*)t x (+)t b using integer or log-domain arithmetic.
+2. Divergence Isolation: On each iteration t, decision outputs from both paths are logged. Because Path B executes exact max-plus operations over order-preserving transformations, its combinatorial chamber assignment is mathematically immune to floating-point truncation [2, 6].
+3. Analysis and Results: Any non-zero decision divergence between Path A and Path B isolates IEEE-754 arithmetic rounding drift from true model representation shifts [6]. Zero divergence confirms pure representation stability, verifying client-side reproducibility without requiring server-side state synchronization [6].
+Systemic Limitations, Failure Modes, and Open Mathematical Bindings
+While max-plus tropical routing provides an arithmetic-exact substrate for in-browser control planes, deployment requires accounting for inherent architectural limitations and open theoretical problems [2, 6].
+Systemic Limitations
+1. Encodings Requirement: The guaranteed elimination of arithmetic drift requires exact (or exactly quantized) integer or fixed-point representations for input vectors entering tropical operators [6]. Unquantized floating-point inputs subjected to continuous noise prior to semiring lifting can still introduce input-level variance [2, 6].
+2. Consensus Scope: Max-plus tropical routing furnishes exact local transition signals within a single browser tab or across local Web Workers [6]. It does not, by itself, constitute a Byzantine-fault-tolerant (BFT) consensus protocol across multiple independent browser tabs, network nodes, or untrusted client devices [6].
+Operational Failure Modes and Safeguards
+Operating integer max-plus routing planes requires systematic safeguards against mathematical edge-case failure modes [1, 2].
+
+
+Operational Failure Mode
+	Root Mathematical Cause
+	Engine Safeguard Mechanism
+	System Recovery Path
+	Gradient Vanishing
+	Rapid decay of temperature parameter (epsilon -> 0+) during Maslov LSE annealing [1, 3].
+	CCRE Floor Guard enforcing lower bound (0 < lambda_min <= lambda_t < 1) [1, 2].
+	Enforces minimal non-zero gradient flow across polyhedral decision chambers [1, 2].
+	Polyhedral Chamber Jitter
+	High-dimensional prompt noise near tropical hypersurface V(P) [1, 2].
+	Axiom C5 FWHT Spectral Resonance Check (R_t < R_min) [1, 2].
+	Triggers FREEZE_RESONANCE, zeroing gain m(t) -> 0 and directing to static fallbacks [1, 2].
+	Expert Chamber Collapse
+	Monopolistic weight growth creating dominant polyhedral chamber volumes [1, 2].
+	ACE Weighted-l1 Budget (sum b_p |w_p| <= tau < 1) [1, 2].
+	Executes 1-Lipschitz soft-thresholding to clip dominant weight norms [1, 2].
+	Out-of-Band Semantic Drift
+	Rapid contextual shifts across multi-hop reasoning steps [1, 2].
+	Axiom C5 Semantic Drift Cap (d_t = 1 - cos(S_t, S_{t-1}) <= 0.3) [1, 2].
+	Enforces EXECUTION_SILENT audit logging and halts token dispatch [1, 2].
+	Open Mathematical Bindings
+The disclosure of this mapping establishes prior art for browser-resident tropical AI routing while formally inviting community falsification of two remaining open bindings [6]:
+
+
+1. Valuation-Ring Degeneration Dictionary: The formal algebraic geometry dictionary connecting residual-stream polyhedral faces to the irreducible components of the special fibre of a valuation-ring degeneration [6, 9]. Specifically, establishing whether the combinatorial face lattice of V(P) corresponds to the dual intersection complex of the special fibre under non-Archimedean tropicalization [6, 9].
+2. Measured Contraction Under Real WebGPU Quantization Noise: The empirical measurement and formal upper bound of the contraction rate of Lambda_m under real-world WebGPU quantization noise (e.g., sub-byte INT4/INT3 group quantization noise in @mlc-ai/web-llm WGSL kernels) [6, 11].
+Synthesis and Conclusions
+Mapping tropical max-plus linear operators Lambda_m to browser-resident LLM inference pipelines establishes a high-performance control plane for client-side AI architectures [1, 2, 6]. By replacing continuous floating-point Softmax projections with idempotent max-plus semiring algebra, client-side runtimes transition from energy-intensive MAC operations to zero-FPU Add-Compare-Select (ACS) integer logic [1, 3, 6].
+
+
+Within browser runtimes like @mlc-ai/web-llm (version 0.2.88), evaluating tropical transition predicates over logit scores yields an arithmetic-exact test for shard-boundary crossings, dynamic precision switches, and Web Worker hand-offs without IEEE-754 floating-point drift [6, 11]. Hilbert projective metric contraction guarantees convergence across distributed Web Workers, while polyhedral convex chambers isolate exact combinatorial states of the residual stream [2, 6, 9]. Resolving the remaining open bindings regarding valuation-ring degenerations and WebGPU quantization noise will further refine this algebraic foundation for browser-native AI architectures [6, 9].
+Sources
+1. Tropical Max-Plus AI Router
+2. Tropical Max-Plus Router Analysis
+3. Max-Plus Tropical AI Routers
+4. System Architecture Plan: Max-Plus Tropical AI Router Integration & Governance Blueprint
+5. Tropical Max-Plus TinyLlama Integration
+6. https://drive.google.com/open?id=1-9yU0K2N9rbixgam-900FedO_3FyKbfz
+7. Tropical Routing Architecture Research
+8. templateArxiv.tex
+9. Tropical_Geometry_Max-Plus_Relations_Report
+10. WebLLM: A High-Performance In-Browser LLM Inference Engine - arXiv
+11. GitHub - mlc-ai/web-llm: High-performance In-browser LLM Inference Engine
+12. Web | onnxruntime
+13. WASM Target Translation Support
+14. MLC LLM | Home
+15. WebLLM: A High-Performance In-Browser LLM Inference Engine - MLC

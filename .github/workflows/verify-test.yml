@@ -1,0 +1,80 @@
+name: Tropical Max-Plus Router Verification & CI Pipeline (ADR-0034)
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "src/**"
+      - "language/**"
+      - "lexlean.toml"
+      - "lexlean.lock"
+      - "prismpm.toml"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - "run_tests.py"
+      - "run-tests.sh"
+      - "benchmark_tropical_router.py"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lean Kernel, PrismPM Release & Tropical Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Lean 4 toolchain
+        uses: leanprover/lean4-action@v1
+        with:
+          toolchain-file: "lean-toolchain"
+
+      - name: Install PrismPM CLI
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          if command -v prismpm >/dev/null 2>&1; then
+            prismpm --version
+          else
+            echo "prismpm 0.5.0 is required in the CI image; failing closed." >&2
+            exit 1
+          fi
+
+      # Fail-closed: any suite failure exits non-zero and fails the job.
+      - name: Run full 9-suite verification and benchmark harness
+        continue-on-error: false
+        run: python3 run_tests.py
+
+      - name: Upload test and benchmark reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tropical-router-adr0034-reports
+          path: reports/
+          if-no-files-found: warn
+
+      - name: Publish human-readable job summary
+        if: always()
+        run: |
+          if [ -f reports/TEST_REPORT_LATEST.md ]; then
+            echo "## ADR-0034 Verification Report" >> "$GITHUB_STEP_SUMMARY"
+            cat reports/TEST_REPORT_LATEST.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -f reports/STRESS_BENCHMARK_LATEST.md ]; then
+            echo "## Tropical Stress Benchmark Summary" >> "$GITHUB_STEP_SUMMARY"
+            cat reports/STRESS_BENCHMARK_LATEST.md >> "$GITHUB_STEP_SUMMARY"
+          fi

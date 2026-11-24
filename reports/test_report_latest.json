@@ -1,0 +1,576 @@
+{
+  "benchmark": {
+    "environment": {
+      "arch": "x86_64",
+      "os": "Linux",
+      "prismpm": "0.5.0",
+      "python": "3.15.2",
+      "toolchain": "leanprover/lean4:v4.32.2"
+    },
+    "schema": "tropical-router/benchmark-result/1",
+    "seed": 88932709,
+    "status": "PASS",
+    "sub_suites": [
+      {
+        "details": {
+          "domain": "[0, 2^32)",
+          "laws_checked": [
+            "mul_definition",
+            "mul_commutativity",
+            "mul_associativity",
+            "add_idempotence",
+            "add_associativity",
+            "distributivity",
+            "score_definition"
+          ],
+          "samples": 10000,
+          "seed": 88932709,
+          "tolerance": 0,
+          "violation_count": 0,
+          "violations": []
+        },
+        "invariant": "INV-TRP-034a",
+        "name": "Max-plus semiring law & score algebra",
+        "status": "PASS",
+        "suite_id": "S1"
+      },
+      {
+        "details": {
+          "boundary_values": [
+            0,
+            1,
+            4294967295,
+            4294967296,
+            9223372036854775807,
+            9223372036854775808,
+            18446744073709551614,
+            18446744073709551615
+          ],
+          "failure_count": 0,
+          "failures": [],
+          "integer_width_bits": 64,
+          "overflows_detected": 3809,
+          "pairs_tested": 5064,
+          "random_near_limit_pairs": 5000,
+          "silent_wraps": 0
+        },
+        "invariant": "INV-TRP-034b",
+        "name": "Checked 64-bit overflow containment",
+        "status": "PASS",
+        "suite_id": "S2"
+      },
+      {
+        "details": {
+          "failures": [],
+          "measurements": [
+            {
+              "batch_ms_p50": 0.001487,
+              "batch_ms_p95": 0.001903,
+              "batch_ms_p99": 0.002223,
+              "median_throughput_per_sec": 6727185.493,
+              "repetitions": 20,
+              "table_size": 10,
+              "warmups": 5
+            },
+            {
+              "batch_ms_p50": 0.014535,
+              "batch_ms_p95": 0.014691,
+              "batch_ms_p99": 0.014948,
+              "median_throughput_per_sec": 6879942.166,
+              "repetitions": 20,
+              "table_size": 100,
+              "warmups": 5
+            },
+            {
+              "batch_ms_p50": 0.167952,
+              "batch_ms_p95": 0.254856,
+              "batch_ms_p99": 0.26929,
+              "median_throughput_per_sec": 5955572.91,
+              "repetitions": 20,
+              "table_size": 1000,
+              "warmups": 5
+            },
+            {
+              "batch_ms_p50": 1.695702,
+              "batch_ms_p95": 2.311861,
+              "batch_ms_p99": 2.375462,
+              "median_throughput_per_sec": 5897363.834,
+              "repetitions": 20,
+              "table_size": 10000,
+              "warmups": 5
+            },
+            {
+              "batch_ms_p50": 17.480811,
+              "batch_ms_p95": 28.292912,
+              "batch_ms_p99": 33.331942,
+              "median_throughput_per_sec": 5721080.341,
+              "repetitions": 20,
+              "table_size": 100000,
+              "warmups": 5
+            }
+          ],
+          "pinned_baseline_throughput_per_sec": 2000000,
+          "seed": 88932711,
+          "tolerance": 0.9
+        },
+        "invariant": "INV-TRP-034a",
+        "name": "Routing table scale & latency",
+        "status": "PASS",
+        "suite_id": "S3"
+      },
+      {
+        "details": {
+          "build_digests": [
+            "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90",
+            "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90"
+          ],
+          "canonical_report_sha256": "a61767d14420732e21c858f729e9f4c487bcf6cdad18a235d726acf228432b55",
+          "failures": [],
+          "timestamp_exemption": true
+        },
+        "invariant": "INV-TRP-034c",
+        "name": "Build & semantic reproducibility",
+        "status": "PASS",
+        "suite_id": "S4"
+      },
+      {
+        "details": {
+          "failures": [],
+          "faults_injected": [
+            "stale_lock_hash",
+            "failing_suite_gate"
+          ]
+        },
+        "invariant": "INV-TRP-034e",
+        "name": "Gate evidence integrity (fault injection)",
+        "status": "PASS",
+        "suite_id": "S5"
+      }
+    ]
+  },
+  "build_digest": "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90",
+  "canonical_sha256": "fe32675e5a146e91e276467b3142503e7babbf8a80885e6ff01ccc9c586d2021",
+  "compiler_semantics": "4b3ed2378d6c43bb32a41d466cf140337e8b1cedc5e1f345aaf3395f488f63a9",
+  "deferred_gate": {
+    "command": "prismpm verify",
+    "reason": "PP5003: snapshot contains no Prism declarations in ADR-0034 baseline",
+    "status": "informational"
+  },
+  "generated_at": "20261124T193936Z",
+  "schema": "tropical-router/test-report/1",
+  "semantic_id": "afd80884608e37187f0bf6808c47b48d96551b3b529146b4757349b35d14d142",
+  "source_digest": "45a96aa1d962573cd7ed66ef1b129a8aa4e861704a6fe315cfa59435240a7cd0",
+  "status": "PASS",
+  "suites": [
+    {
+      "details": {
+        "lake": "Lake version 5.0.0-src+f3b06c7 (Lean version 4.32.2)",
+        "lean": "Lean (version 4.32.2, x86_64-unknown-linux-gnu, commit f3b06c705e6c85f5314019d5d3baab0fec5b580c, Release)",
+        "prismpm": "prismpm 0.5.0",
+        "python": "3.15.2",
+        "standalone_lexlean_required": false,
+        "toolchain_file": "leanprover/lean4:v4.32.2"
+      },
+      "duration_ms": 145.607,
+      "failures": [],
+      "id": "TS-01",
+      "name": "Toolchain & Runtime Pin Audit",
+      "status": "PASS",
+      "target": "lean --version; lake --version; prismpm --version; lean-toolchain"
+    },
+    {
+      "details": {
+        "command": "lake build --allow-empty",
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "Nothing to build."
+      },
+      "duration_ms": 166.69,
+      "failures": [],
+      "id": "TS-02",
+      "name": "Lake Host Workspace Build",
+      "status": "PASS",
+      "target": "lake build --allow-empty"
+    },
+    {
+      "details": {
+        "compiler_semantics": "4b3ed2378d6c43bb32a41d466cf140337e8b1cedc5e1f345aaf3395f488f63a9",
+        "lean_toolchain": "leanprover/lean4:v4.32.2",
+        "project_config_sha256": "6420abb6eedf1b3af7d816fa7f1dc65ac6cca5dad97f6535640738c429e5f660",
+        "workspace_file": [
+          {
+            "actual": "7ad4e2f8cd02a39377bc8dba0dee339a93099212b6356f8212068018b39a4db4",
+            "expected": "7ad4e2f8cd02a39377bc8dba0dee339a93099212b6356f8212068018b39a4db4",
+            "path": "lake-manifest.json"
+          },
+          {
+            "actual": "ff78e7fdfc8a05c0d9afd883d4c5ceb8e3897d4e9e8398fdbdf501a496d44e4b",
+            "expected": "ff78e7fdfc8a05c0d9afd883d4c5ceb8e3897d4e9e8398fdbdf501a496d44e4b",
+            "path": "lakefile.toml"
+          },
+          {
+            "actual": "2bdc48adfa58d0017e538a0ad117c5d73d35deec879978f909406a80c8037273",
+            "expected": "2bdc48adfa58d0017e538a0ad117c5d73d35deec879978f909406a80c8037273",
+            "path": "lean-toolchain"
+          }
+        ]
+      },
+      "duration_ms": 0.818,
+      "failures": [],
+      "id": "TS-03",
+      "name": "LexLean Lock & Canonical Config Parity",
+      "status": "PASS",
+      "target": "lexlean.lock SHA-256 parity"
+    },
+    {
+      "details": {
+        "entity_count": 0,
+        "model_id": "9fda2f7225f85aaf51645bd5fcdb3e75f17d2ccc50fa937e6159ab63ed259b90",
+        "schema": "prismpm/check-result/1",
+        "semantic_id": "afd80884608e37187f0bf6808c47b48d96551b3b529146b4757349b35d14d142",
+        "snapshot_id": "ce802953985a15d4fa1515d1f071c54242a7b295b671f5ae357943c020a42b45"
+      },
+      "duration_ms": 2912.444,
+      "failures": [],
+      "id": "TS-04",
+      "name": "PrismPM Static Model Check",
+      "semantic_id": "afd80884608e37187f0bf6808c47b48d96551b3b529146b4757349b35d14d142",
+      "status": "PASS",
+      "target": "prismpm check --json"
+    },
+    {
+      "details": {
+        "attestation_count": 1,
+        "matching_attestations": [
+          ".lexlean/verified/3245a2c5642fc4c8fbda090c436682597d32764c27029ba434cc41ce3d897860/attestation.json"
+        ],
+        "project_declarations": [
+          {
+            "attestation": "3245a2c5642fc4c8fbda090c436682597d32764c27029ba434cc41ce3d897860",
+            "name": "TropicalRouter.Main.tropicalMul",
+            "observed_axioms": [],
+            "policy_kind": "none"
+          },
+          {
+            "attestation": "3245a2c5642fc4c8fbda090c436682597d32764c27029ba434cc41ce3d897860",
+            "name": "TropicalRouter.Main.tropicalScore",
+            "observed_axioms": [],
+            "policy_kind": "none"
+          },
+          {
+            "attestation": "3245a2c5642fc4c8fbda090c436682597d32764c27029ba434cc41ce3d897860",
+            "name": "TropicalRouter.Main.router_smoke_eval",
+            "observed_axioms": [],
+            "policy_kind": "none"
+          }
+        ],
+        "scope_note": "Runtime declarations with exact-policy axioms are excluded from the project axiom gate."
+      },
+      "duration_ms": 11.475,
+      "failures": [],
+      "id": "TS-05",
+      "name": "Lean Kernel Attestation Audit",
+      "status": "PASS",
+      "target": ".lexlean/verified/*/attestation.json (project declarations only)"
+    },
+    {
+      "details": {
+        "source_sha256": "3192d0b6e6fca418fcba89de53387ed22fe079b2a5bad90430c8be12720f9b41",
+        "tokens_checked": [
+          "name: tropicalMul",
+          "name: tropicalScore",
+          "name: router_smoke_eval",
+          "statement: ((tropicalScore 3 5 2) = 10)",
+          "proof: decide{}",
+          "effects: [overflow]",
+          "targets: [rust-core, rust-std]"
+        ]
+      },
+      "duration_ms": 0.262,
+      "failures": [],
+      "id": "TS-06",
+      "name": "Formal Router Theorem Audit",
+      "status": "PASS",
+      "target": "src/Main.lex.tex formal declaration audit"
+    },
+    {
+      "build_digest": "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90",
+      "details": {
+        "baseline_note": "baseline applies",
+        "build_id": "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90",
+        "manifest_files": [
+          {
+            "actual_bytes": 12660,
+            "actual_sha256": "2409c87111d6684305c35e34dc6a29ac496dd0e9d27d26109eae322fe66d8b89",
+            "expected_bytes": 12660,
+            "expected_sha256": "2409c87111d6684305c35e34dc6a29ac496dd0e9d27d26109eae322fe66d8b89",
+            "path": "lexlean/build/coverage/TropicalRouter/Main.coverage.json"
+          },
+          {
+            "actual_bytes": 571,
+            "actual_sha256": "77dde5bd4ab5bbdcad8bfe424494a8e0d34ae3af25423c9b2692e2cf29b25a2f",
+            "expected_bytes": 571,
+            "expected_sha256": "77dde5bd4ab5bbdcad8bfe424494a8e0d34ae3af25423c9b2692e2cf29b25a2f",
+            "path": "lexlean/build/declarations/TropicalRouter/Main.json"
+          },
+          {
+            "actual_bytes": 20768,
+            "actual_sha256": "4c420fafacd73c21cc4d79c1fa52bdc028a5f8d160f23596ef37c55262c058f7",
+            "expected_bytes": 20768,
+            "expected_sha256": "4c420fafacd73c21cc4d79c1fa52bdc028a5f8d160f23596ef37c55262c058f7",
+            "path": "lexlean/build/lexicons/Main.closure.json"
+          },
+          {
+            "actual_bytes": 2993,
+            "actual_sha256": "be7baeecc1fecf3901c2f06d9a5152a09307af684311f923fb0ae92458913346",
+            "expected_bytes": 2993,
+            "expected_sha256": "be7baeecc1fecf3901c2f06d9a5152a09307af684311f923fb0ae92458913346",
+            "path": "lexlean/build/manifest.json"
+          },
+          {
+            "actual_bytes": 1976,
+            "actual_sha256": "8704615667eb7133e942d70076915b4ed4af0d57c975610dee950d1fde53ed24",
+            "expected_bytes": 1976,
+            "expected_sha256": "8704615667eb7133e942d70076915b4ed4af0d57c975610dee950d1fde53ed24",
+            "path": "lexlean/build/maps/TropicalRouter/Main.map.json"
+          },
+          {
+            "actual_bytes": 471,
+            "actual_sha256": "d7cbf5298c84689f22cfecdd94cfa88028d19ce461d6890be110e5107e21b90e",
+            "expected_bytes": 471,
+            "expected_sha256": "d7cbf5298c84689f22cfecdd94cfa88028d19ce461d6890be110e5107e21b90e",
+            "path": "lexlean/build/modules/TropicalRouter/Main.lean"
+          },
+          {
+            "actual_bytes": 1213,
+            "actual_sha256": "80feccc92e351cc208bad87dec46daf2af86a05be4ce58cd6695f5e27595fce2",
+            "expected_bytes": 1213,
+            "expected_sha256": "80feccc92e351cc208bad87dec46daf2af86a05be4ce58cd6695f5e27595fce2",
+            "path": "lexlean/build/modules/TropicalRouter/Main.tex"
+          },
+          {
+            "actual_bytes": 3154,
+            "actual_sha256": "6ae672fc4febecd5aeae9834bbd53a272f8bb66f1792d8fab4ff56d874ecdf4a",
+            "expected_bytes": 3154,
+            "expected_sha256": "6ae672fc4febecd5aeae9834bbd53a272f8bb66f1792d8fab4ff56d874ecdf4a",
+            "path": "lexlean/build/production/TropicalRouter/Main.eligibility.json"
+          },
+          {
+            "actual_bytes": 25702,
+            "actual_sha256": "ce802953985a15d4fa1515d1f071c54242a7b295b671f5ae357943c020a42b45",
+            "expected_bytes": 25702,
+            "expected_sha256": "ce802953985a15d4fa1515d1f071c54242a7b295b671f5ae357943c020a42b45",
+            "path": "lexlean/snapshot.json"
+          },
+          {
+            "actual_bytes": 1345,
+            "actual_sha256": "9fda2f7225f85aaf51645bd5fcdb3e75f17d2ccc50fa937e6159ab63ed259b90",
+            "expected_bytes": 1345,
+            "expected_sha256": "9fda2f7225f85aaf51645bd5fcdb3e75f17d2ccc50fa937e6159ab63ed259b90",
+            "path": "model.prism.json"
+          }
+        ],
+        "manifest_path": ".prism/build/1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90/manifest.json",
+        "pinned_source_digest": "45a96aa1d962573cd7ed66ef1b129a8aa4e861704a6fe315cfa59435240a7cd0",
+        "semantic_id": "afd80884608e37187f0bf6808c47b48d96551b3b529146b4757349b35d14d142",
+        "source_digest": "45a96aa1d962573cd7ed66ef1b129a8aa4e861704a6fe315cfa59435240a7cd0"
+      },
+      "duration_ms": 3213.656,
+      "failures": [],
+      "id": "TS-07",
+      "name": "PrismPM Build & Manifest Integrity",
+      "status": "PASS",
+      "target": "prismpm build --json + manifest SHA-256 verification"
+    },
+    {
+      "details": {
+        "environment": {
+          "arch": "x86_64",
+          "os": "Linux",
+          "prismpm": "0.5.0",
+          "python": "3.15.2",
+          "toolchain": "leanprover/lean4:v4.32.2"
+        },
+        "schema": "tropical-router/benchmark-result/1",
+        "seed": 88932709,
+        "status": "PASS",
+        "sub_suites": [
+          {
+            "details": {
+              "domain": "[0, 2^32)",
+              "laws_checked": [
+                "mul_definition",
+                "mul_commutativity",
+                "mul_associativity",
+                "add_idempotence",
+                "add_associativity",
+                "distributivity",
+                "score_definition"
+              ],
+              "samples": 10000,
+              "seed": 88932709,
+              "tolerance": 0,
+              "violation_count": 0,
+              "violations": []
+            },
+            "invariant": "INV-TRP-034a",
+            "name": "Max-plus semiring law & score algebra",
+            "status": "PASS",
+            "suite_id": "S1"
+          },
+          {
+            "details": {
+              "boundary_values": [
+                0,
+                1,
+                4294967295,
+                4294967296,
+                9223372036854775807,
+                9223372036854775808,
+                18446744073709551614,
+                18446744073709551615
+              ],
+              "failure_count": 0,
+              "failures": [],
+              "integer_width_bits": 64,
+              "overflows_detected": 3809,
+              "pairs_tested": 5064,
+              "random_near_limit_pairs": 5000,
+              "silent_wraps": 0
+            },
+            "invariant": "INV-TRP-034b",
+            "name": "Checked 64-bit overflow containment",
+            "status": "PASS",
+            "suite_id": "S2"
+          },
+          {
+            "details": {
+              "failures": [],
+              "measurements": [
+                {
+                  "batch_ms_p50": 0.001487,
+                  "batch_ms_p95": 0.001903,
+                  "batch_ms_p99": 0.002223,
+                  "median_throughput_per_sec": 6727185.493,
+                  "repetitions": 20,
+                  "table_size": 10,
+                  "warmups": 5
+                },
+                {
+                  "batch_ms_p50": 0.014535,
+                  "batch_ms_p95": 0.014691,
+                  "batch_ms_p99": 0.014948,
+                  "median_throughput_per_sec": 6879942.166,
+                  "repetitions": 20,
+                  "table_size": 100,
+                  "warmups": 5
+                },
+                {
+                  "batch_ms_p50": 0.167952,
+                  "batch_ms_p95": 0.254856,
+                  "batch_ms_p99": 0.26929,
+                  "median_throughput_per_sec": 5955572.91,
+                  "repetitions": 20,
+                  "table_size": 1000,
+                  "warmups": 5
+                },
+                {
+                  "batch_ms_p50": 1.695702,
+                  "batch_ms_p95": 2.311861,
+                  "batch_ms_p99": 2.375462,
+                  "median_throughput_per_sec": 5897363.834,
+                  "repetitions": 20,
+                  "table_size": 10000,
+                  "warmups": 5
+                },
+                {
+                  "batch_ms_p50": 17.480811,
+                  "batch_ms_p95": 28.292912,
+                  "batch_ms_p99": 33.331942,
+                  "median_throughput_per_sec": 5721080.341,
+                  "repetitions": 20,
+                  "table_size": 100000,
+                  "warmups": 5
+                }
+              ],
+              "pinned_baseline_throughput_per_sec": 2000000,
+              "seed": 88932711,
+              "tolerance": 0.9
+            },
+            "invariant": "INV-TRP-034a",
+            "name": "Routing table scale & latency",
+            "status": "PASS",
+            "suite_id": "S3"
+          },
+          {
+            "details": {
+              "build_digests": [
+                "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90",
+                "1027857c266519abf79bcbd6d5dd95ed72f0d731ca7c66ecb3e250f3029dfa90"
+              ],
+              "canonical_report_sha256": "a61767d14420732e21c858f729e9f4c487bcf6cdad18a235d726acf228432b55",
+              "failures": [],
+              "timestamp_exemption": true
+            },
+            "invariant": "INV-TRP-034c",
+            "name": "Build & semantic reproducibility",
+            "status": "PASS",
+            "suite_id": "S4"
+          },
+          {
+            "details": {
+              "failures": [],
+              "faults_injected": [
+                "stale_lock_hash",
+                "failing_suite_gate"
+              ]
+            },
+            "invariant": "INV-TRP-034e",
+            "name": "Gate evidence integrity (fault injection)",
+            "status": "PASS",
+            "suite_id": "S5"
+          }
+        ]
+      },
+      "duration_ms": 7063.21,
+      "failures": [],
+      "id": "TS-08",
+      "name": "Tropical Benchmark Engine",
+      "status": "PASS",
+      "target": "benchmark_tropical_router.py (S1-S5)"
+    },
+    {
+      "details": {
+        "hook": ".githooks/pre-commit",
+        "required_report_keys": [
+          "benchmark",
+          "build_digest",
+          "canonical_sha256",
+          "compiler_semantics",
+          "generated_at",
+          "schema",
+          "semantic_id",
+          "status",
+          "suites",
+          "toolchain"
+        ],
+        "s5_status": "PASS",
+        "workflow": ".github/workflows/verify-test.yml"
+      },
+      "duration_ms": 13.374,
+      "failures": [],
+      "id": "TS-09",
+      "name": "Reporting & Gate Contract Integrity",
+      "status": "PASS",
+      "target": "reports schema, hook, workflow, and fault-injection contract"
+    }
+  ],
+  "toolchain": {
+    "arch": "x86_64",
+    "language": "lexlean/project/1 (Language 1.2)",
+    "lean": "leanprover/lean4:v4.32.2",
+    "os": "Linux",
+    "prismpm": "prismpm 0.5.0",
+    "python": "3.15.2"
+  }
+}

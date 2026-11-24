@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# ADR-0034 fail-closed pre-commit gate.
+# Runs the full 9-suite harness and stages only freshly generated reports on success.
+set -euo pipefail
+
+if PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  :
+else
+  PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
+cd "$PROJECT_ROOT"
+
+# Documentation-only commits skip the 13 s harness; all code/config changes run it.
+STAGED_FILES="$(git diff --cached --name-only)"
+if [[ -n "$STAGED_FILES" ]] && ! grep -qvE '^(README\.md|docs/|reports/|LICENSE)' <<< "$STAGED_FILES"; then
+  echo "[ADR-0034] Documentation-only commit; verification harness skipped."
+  exit 0
+fi
+
+echo "[ADR-0034] Running tropical router verification harness..."
+if ! python3 run_tests.py; then
+  echo "[ADR-0034] Verification failed; commit blocked." >&2
+  exit 1
+fi
+
+git add reports/TEST_REPORT_LATEST.md \
+        reports/test_report_latest.json \
+        reports/STRESS_BENCHMARK_LATEST.md \
+        reports/stress_benchmark_latest.json
+
+echo "[ADR-0034] Verification passed; reports staged."
+exit 0

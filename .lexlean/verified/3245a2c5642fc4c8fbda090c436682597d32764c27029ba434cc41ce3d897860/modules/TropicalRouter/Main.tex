@@ -1,0 +1,26 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\begin{document}
+\section*{Semantic declarations}
+\subsection*{\texttt{tropicalMul}}
+\noindent Kind: \texttt{definition}.\par
+\noindent Parameters: \texttt{(w : Nat) (x : Nat)}.\par
+\noindent Execution: executable, non-escaping closures only.\par
+\noindent Production root for targets \texttt{rust-core, rust-std}; admitted effects: \texttt{overflow}.\par
+\noindent Type: \texttt{Nat}.\par
+\noindent Definition: \texttt{(w + x)}.\par
+\noindent Axiom policy: \texttt{none}.\par
+\subsection*{\texttt{tropicalScore}}
+\noindent Kind: \texttt{definition}.\par
+\noindent Parameters: \texttt{(w : Nat) (x : Nat) (b : Nat)}.\par
+\noindent Execution: executable, non-escaping closures only.\par
+\noindent Production root for targets \texttt{rust-core, rust-std}; admitted effects: \texttt{overflow}.\par
+\noindent Type: \texttt{Nat}.\par
+\noindent Definition: \texttt{((w + x) + b)}.\par
+\noindent Axiom policy: \texttt{none}.\par
+\subsection*{\texttt{router\_smoke\_eval}}
+\noindent Kind: \texttt{theorem}.\par
+\noindent Statement: \texttt{(tropicalScore (3) (5) (2) = 10)}.\par
+\noindent Axiom policy: \texttt{none}.\par
+\end{document}
